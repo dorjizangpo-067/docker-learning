@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FastAPI Todo Learning</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 50px auto; }
+        .todo-item { 
+            border-bottom: 1px solid #eee; 
+            padding: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .delete-btn { color: white; background: red; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
+        input { padding: 8px; width: 70%; }
+        button#addBtn { padding: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>My Todo List</h2>
+    <input type="text" id="todoInput" placeholder="Enter a task...">
+    <button id="addBtn" onclick="addTodo()">Add</button>
+    <div id="todoList" style="margin-top: 20px;"></div>
+
+    <script>
+        const API_URL = "/todos"; // Relative path is safer
+
+        async function loadTodos() {
+            const response = await fetch(API_URL);
+            const todos = await response.json();
+            const listDiv = document.getElementById('todoList');
+            listDiv.innerHTML = ''; 
+            
+            todos.forEach(todo => {
+                const div = document.createElement('div');
+                div.className = 'todo-item';
+                
+                // Add the text and the delete button
+                div.innerHTML = `
+                    <span>${todo}</span>
+                    <button class="delete-btn" onclick="deleteTodo('${todo}')">Delete</button>
+                `;
+                listDiv.appendChild(div);
+            });
+        }
+
+        async function addTodo() {
+            const input = document.getElementById('todoInput');
+            const title = input.value;
+            if (!title) return;
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: title })
+            });
+            input.value = '';
+            loadTodos();
+        }
+
+        async function deleteTodo(todoName) {
+            await fetch(`${API_URL}/${todoName}`, {
+                method: 'DELETE'
+            });
+            loadTodos(); // Refresh the list
+        }
+
+        loadTodos();
+    </script>
+</body>
+</html>
