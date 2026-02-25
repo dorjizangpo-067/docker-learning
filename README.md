@@ -71,7 +71,7 @@ docker run -d \
 ## 📂 Project Structure
 ```
 docker-learning/
-  ├── main.py            # FastAPI Application
+  ├── main.py            # FastAPI Application sample application
   ├── index.html         # Frontend interface
   ├── Dockerfile         # Container configuration
   ├── requirements.txt   # Python dependencies
